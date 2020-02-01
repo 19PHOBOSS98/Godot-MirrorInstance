@@ -4,9 +4,12 @@ onready var dummy_cam = $DummyCam
 onready var mirror_cam = $View/Camera
 var a = {}	#dictionary to remember Meshinstances' cull masks
 export(int, 1, 20, 1) var IgnoreLayer = 2
+var t = false # used to check for variable changes in a loop only when the variable changes
+
 #For Diagnostics:=========================================================================================================================================================================================================================================
 #var BDY
 #var Clmsk
+#var i = 0
 #=========================================================================================================================================================================================================================================================
 
 
@@ -14,8 +17,7 @@ func _ready():
 #	print(find_node("Camera").get("cull_mask"))
 	add_to_group("mirrors")	
 	get("material/0").get("shader_param/refl_tx").set("viewport_path",find_node("View").get_path())			#sets the viewport_path to the right viewport for every instance of this scene ,Mi2's child(0)='View'
-	$View.size = Vector2(2000,1000)			#the screen display size (from project settings)
-											# must have the same width to height ratio (w=2h) as the settings here: 
+
 	#$View.size = Vector2(ProjectSettings.get_setting("display/window/size/width"), ProjectSettings.get_setting("display/window/size/height"))
 	get_node("View/Camera").set("cull_mask",1048575)#when all the camera's layer bits are turned on, the cull mask value is 1048575:  2^0 + 2^1 + 2^2 +...+2^19=1048575
 	get_node("View/Camera").set_cull_mask_bit(IgnoreLayer-1,false)		#while every layer is on this turns the chosen layer off
@@ -33,7 +35,22 @@ func update_cam(main_cam_transform):
 	scale.y *= -1
 	mirror_cam.global_transform = dummy_cam.global_transform
 	mirror_cam.global_transform.basis.x *= -1
+	
+	
+	#syncs mirror size with game window size but only changes mirror's viewport size when game window size changes instead of constantly updating size every second
+	if($View.size != get_viewport().size):					#checks if game window size is not equal to mirror viewprt size			
+		if(t == false):							#interact with 't' to change it to true only if 't' isn't already true
+			t=true							
+			$View.size = get_viewport().size			#only run once whenever 't' is changed
+#For Diagnostics:=========================================================================================================================================================================================================================================
+#			i+=1
+#			print("view size updated ",i," ", self.name)
+#==========================================================================================================================================================================================================================================================
 
+		else:
+			t=false
+			
+			
 
 #recursively goes through a PhysicsBody node's branch to remember MeshInstances' layer mask 
 #as it replaces it with the layer mask that the mirror's camera ignores
