@@ -5,7 +5,7 @@ So I herd ya needed mirrors...[YouTube Video](https://www.youtube.com/embed/sL65
 
 This is a WIP build of my mirror asset,     
   this is the best that I could do within a week      
-  and this is my first ever time in using a game engine     
+  and this is my first time ever using a game engine     
   so no promises :D
 
 
